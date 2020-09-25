@@ -33,3 +33,21 @@ This is where SamiraA operates from.  This mimics a Privileged Admin Workstation
 ## Client01
 
 Has data on the machine which can be seen as confidential, including credit card information and social security data.
+
+Copying Files over: 
+
+
+  cp .\ProvisionAdminPc2Dsc.ps1 .\ProvisionAdminPc2Dsc\ProvisionAdminPc2Dsc.ps1
+  cp .\ProvisionAdminPcDsc.ps1 .\ProvisionAdminPcDsc\ProvisionAdminPcDsc.ps1
+  cp .\ProvisionClient01.ps1 .\ProvisionClient01\ProvisionClient01.ps1
+  cp .\ProvisionDcDsc.ps1 .\ProvisionDcDsc\ProvisionDcDsc.ps1
+  cp .\ProvisionIntWkst01Dsc.ps1 .\ProvisionIntWkst01Dsc\ProvisionIntWkst01Dsc.ps1
+  cp .\ProvisionVictimPcDsc.ps1 .\ProvisionVictimPcDsc\ProvisionVictimPcDsc.ps1
+  diff .\ProvisionIntWkst01Dsc.ps1 .\ProvisionIntWkst01Dsc\ProvisionIntWkst01Dsc.ps1
+  Compress-Archive -Path .\ProvisionAdminPc2Dsc\ -DestinationPath .\ProvisionAdminPc2Dsc.zip
+  Compress-Archive -Path .\ProvisionAdminPc2Dsc\* -DestinationPath .\ProvisionAdminPc2Dsc2.zip
+  Compress-Archive .\ProvisionAdminPcDsc\* .\ProvisionAdminPcDsc.zip
+  Compress-Archive .\ProvisionClient01\* .\ProvisionClient01.zip
+  Compress-Archive .\ProvisionDcDsc\* .\ProvisionDcDsc.zip
+  Compress-Archive .\ProvisionIntWkst01Dsc\* .\ProvisionIntWkst01Dsc.zip
+  Compress-Archive .\ProvisionVictimPcDsc\* .\ProvisionVictimPcDsc.zip

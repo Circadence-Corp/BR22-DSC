@@ -18,7 +18,7 @@
     },
     "UserPrincipalName": {
       "type": "string",
-      "defaultValue": "seccxp.ninja",
+      "defaultValue": "cloudconhmg",
       "metadata": {
         "description": "The UPN for users who will be provisioned in Active Directory.  Useful when later using AAD Connect"
       }
@@ -67,9 +67,9 @@
     },
     "ElsieMPassword": {
       "type": "securestring",
-      "defaultValue": "beforehad&,+4529pass34call!",
+      "defaultValue": "Els13M@#",
       "metadata": {
-        "description": "ElsieM's password. By default it is 'beforehad&,+4529pass34call!'  ElsieM is admin on IntWkst01 (but no other domain credentials)."
+        "description": "ElsieM's password. By default it is 'Els13M@#'  ElsieM is admin on IntWkst01 (but no other domain credentials)."
       }
     },    
     "AATPServicePassword": {
@@ -105,26 +105,21 @@
     "GenericStorageAccountName": "[concat(uniqueString(resourceGroup().id), 'sa')]",
     "DcVmName": "ContosoDc",
     "DcPromoteDcDscName": "DcPromoDsc",
-    "DcDscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionDcDsc.zip?raw=true')]",
+    "DcDscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionDcDsc.zip?raw=true')]",
     "VictimVmName": "VictimPc",
     "VictimDscName": "VictimDsc",
-    "VictimDscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionVictimPcDsc.zip?raw=true')]",
+    "VictimDscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionVictimPcDsc.zip?raw=true')]",
     "AdminPcVmName": "AdminPc",
     "AdminPcDscName": "AdminPcDsc",
-    "AdminPcDscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionAdminPcDsc.zip?raw=true')]",
+    "AdminPcDscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionAdminPcDsc.zip?raw=true')]",
     "AdminPc2VmName": "AdminPc2",
     "AdminPc2DscName": "AdminPc2Dsc",
-    "AdminPc2DscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionAdminPc2Dsc.zip?raw=true')]",
+    "AdminPc2DscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionAdminPc2Dsc.zip?raw=true')]",
     "McasVmName": "Client01",
     "McasDscName": "SetupMcasClient",
-    "McasDscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionClient01.zip?raw=true')]",
-    "IntWkst01VmName": "IntWkst01",
-    "IntWkst01DscName": "IntWkst01Dsc",
-    "IntWkst01DscUrl": "[concat('https://github.com/Circadence-Corp/DSREexpertBR/blob/', variables('GithubBranch'), '/DSC/ProvisionIntWkst01Dsc.zip?raw=true')]",
+    "McasDscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionClient01.zip?raw=true')]",
     "AipDomainServiceAccount": "AipScanner",
-    "AipDomainServiceAccountPassword": "Somepass1",
-    "AscLinuxName": "Ubuntu-Katoolin"
-
+    "AipDomainServiceAccountPassword": "Somepass1"
   },
   "resources": [
     {
@@ -222,7 +217,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
+          "vmSize": "Standard_D2s_v3"
         },
         "osProfile": {
           "computerName": "[variables('DcVmName')]",
@@ -288,13 +283,13 @@
                   "UserName": "LisaV",
                   "Password": "[parameters('LisaVPassword')]"
                 },
-                "AipServiceCreds": {
-                  "UserName": "[variables('AipDomainServiceAccount')]",
-                  "Password": "[variables('AipDomainServiceAccountPassword')]"
-                },
                 "AatpServiceCreds": {
                   "UserName": "AATPService",
                   "Password": "[parameters('AATPServicePassword')]"
+                },
+                "ElsieMCreds": {
+                  "UserName": "ElsieM",
+                  "Password": "[parameters('ElsieMPassword')]"
                 }
               }
             },
@@ -329,7 +324,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Circadence-Corp/DSREexpertBR/master/Nested/VNetConfiguration.json",
+          "uri": "https://raw.githubusercontent.com/Circadence-Corp/BR22-DSC/master/Nested/VNetConfiguration.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -367,7 +362,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
+          "vmSize": "Standard_D2s_v3"
         },
         "osProfile": {
           "computerName": "[variables('VictimVmName')]",
@@ -444,97 +439,7 @@
           }
         }
       ]
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "apiVersion": "2018-10-01",
-      "name": "[variables('IntWkst01VmName')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('GenericNicName'), 6))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('GenericStorageAccountName'),6))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('DeploymentVnetDnsName'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
-        },
-        "osProfile": {
-          "computerName": "[variables('IntWkst01VmName')]",
-          "adminUsername": "[parameters('builtinAdministratorAccount')]",
-          "adminPassword": "[parameters('builtinAdministratorPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "microsoftwindowsdesktop",
-            "offer": "office-365",
-            "sku": "1903-evd-o365pp",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "[concat(variables('GenericStorageAccountName'), 6)]",
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          }
-        },
-        "licenseType": "Windows_Client",
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('GenericNicName'), 6))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": false
-          }
-        }
-      },
-      "resources": [
-        {
-          "type": "extensions",
-          "apiVersion": "2018-10-01",
-          "name": "[variables('IntWkst01DscName')]",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines', variables('IntWkst01VmName'))]",
-            "[resourceId('Microsoft.Resources/deployments', variables('DeploymentVnetDnsName'))]"
-          ],
-          "properties": {
-            "publisher": "Microsoft.Powershell",
-            "type": "DSC",
-            "autoUpgradeMinorVersion": true,
-            "typeHandlerVersion": "2.77",
-            "settings": {
-              "configuration": {
-                "url": "[variables('IntWkst01DscUrl')]",
-                "script": "ProvisionIntWkst01Dsc.ps1",
-                "function": "SetupIntWkst01"
-              },
-              "configurationArguments": {
-                "DomainName": "[parameters('DomainName')]",
-                "NetBiosName": "[parameters('NetBiosName')]",
-                "DnsServer": "[variables('PrivateIpAddressesArray').Ip[5]]",
-                "Branch": "[variables('GithubBranch')]"
-              }
-            },
-            "protectedSettings": {
-              "configurationArguments": {
-                "AdminCred": {
-                  "UserName": "[parameters('builtinAdministratorAccount')]",
-                  "Password": "[parameters('builtinAdministratorPassword')]"
-                },
-                "ElsieMCred": {
-                  "UserName": "ElsieM",
-                  "Password": "[parameters('ElsieMPassword')]"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },    
+    },   
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-10-01",
@@ -547,7 +452,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
+          "vmSize": "Standard_D2s_v3"
         },
         "osProfile": {
           "computerName": "[variables('AdminPcVmName')]",
@@ -622,6 +527,10 @@
                 "AipServiceCred": {
                   "UserName": "[variables('AipDomainServiceAccount')]",
                   "Password": "[variables('AipDomainServiceAccountPassword')]"
+                },
+                "ElsieMCred": {
+                  "UserName": "ElsieM",
+                  "Password": "[parameters('ElsieMPassword')]"
                 }
               }
             }
@@ -641,7 +550,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
+          "vmSize": "Standard_D2s_v3"
         },
         "osProfile": {
           "computerName": "[variables('AdminPc2VmName')]",
@@ -735,7 +644,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A2_v2"
+          "vmSize": "Standard_D2s_v3"
         },
         "osProfile": {
           "computerName": "[variables('McasVmName')]",
@@ -812,50 +721,6 @@
           }
         }
       ]
-    },
-    {
-      "apiVersion": "2018-10-01",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[variables('AscLinuxName')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('GenericNicName'), 5))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('GenericStorageAccountName'),5))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('DeploymentVnetDnsName'))]"
-      ],
-      "properties": {
-        "hardwareprofile": {
-          "vmsize": "Standard_A2_v2"
-        },
-        "osProfile": {
-          "computerName": "[concat(variables('AscLinuxName'))]",
-          "adminusername": "[parameters('builtinAdministratorAccount')]",
-          "adminpassword": "[parameters('builtinAdministratorPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "16.04-LTS",
-            "version": "latest"
-          },
-          "osdisk": {
-            "name": "[concat(variables('GenericStorageAccountName'), 5)]",
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            },
-            "caching": "ReadWrite"
-          }
-        },
-        "networkprofile": {
-          "networkinterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('GenericNicName'), 5))]"
-            }
-          ]
-        }
-      }
     }
   ]
 }
