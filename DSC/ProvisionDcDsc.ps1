@@ -240,7 +240,7 @@ Configuration CreateADForest
 		xRemoteFile DownloadBginfo
 		{
 			DestinationPath = 'C:\BgInfo\BgInfoConfig.bgi'
-			Uri = 'https://github.com/Circadence-Corp/DSREexpertBR/blob/master/Downloads/BgInfo/contosodc.bgi?raw=true'
+			Uri = 'https://github.com/Circadence-Corp/BR22-DSC/blob/master/Downloads/BgInfo/contosodc.bgi?raw=true'
 			DependsOn = '[xWaitForADDomain]DscForestWait'
 		}
 

@@ -2,7 +2,7 @@
 
 ## Intro
 
-This repo currently is a straight copy of git ref 4ab8ce957fa76d60c43e5b326d0c0f4222351cb4 from the repo at https://github.com/Circadence-Corp/DSREexpertBR
+This repo currently is a straight copy of git ref 4ab8ce957fa76d60c43e5b326d0c0f4222351cb4 from the repo at https://github.com/Circadence-Corp/BR22-DSC
 
 Everything below this line is the readme copied from there.
 
@@ -32,7 +32,7 @@ Primer for PowerShell Az cmdlets: [here](https://docs.microsoft.com/en-us/powers
 
 This creates VMs, one of those VMs being a Domain Controller which hydrates users in an AD environment.  Those users are also configured appropriately on the respective VMs to simulate management and administrative activities.
 
-For more information refer to ```DSC``` [folder](https://github.com/Circadence-Corp/DSREexpertBR/blob/master/CHANGELOG.md).
+For more information refer to ```DSC``` [folder](https://github.com/Circadence-Corp/BR22-DSC/blob/master/CHANGELOG.md).
 
 ### Phase 0 (build from absolute scratch)
 To build from scratch (**Phase 0**):
@@ -85,4 +85,4 @@ Want to skip Phase 0?  Feel free to grab our VHDs from an open Azure Storage acc
 Don't want to download them?  See guidance on ```Phase 2```; those commands automatically pull from these public Azure Storage Containers; total deployment time is usually ~2 minutes.
 
 ## Changelog
-For full view of [whats new and comprehensive changelog, here here](https://github.com/Circadence-Corp/DSREexpertBR/blob/master/CHANGELOG.md).
+For full view of [whats new and comprehensive changelog, here here](https://github.com/Circadence-Corp/BR22-DSC/blob/master/CHANGELOG.md).
