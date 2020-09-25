@@ -95,7 +95,7 @@
     },
     "NumberVmsNicStorage": 6,
     "DeploymentVnetDnsName": "vNetDnsSettingsDeployment",
-    "GithubBranch": "DefendTheFlagExport",
+    "GithubBranch": "master",
     "vNetAddressPrefix": "10.0.24.0/24",
     "vNetName": "DefendTheFlag-vNet",
     "vNetSubnetName": "Subnet",
@@ -286,10 +286,10 @@
                 "AatpServiceCreds": {
                   "UserName": "AATPService",
                   "Password": "[parameters('AATPServicePassword')]"
-                },
-                "ElsieMCreds": {
-                  "UserName": "ElsieM",
-                  "Password": "[parameters('ElsieMPassword')]"
+                },                              
+                "AipServiceCreds": {
+                  "UserName": "[variables('AipDomainServiceAccount')]",
+                  "Password": "[variables('AipDomainServiceAccountPassword')]"
                 }
               }
             },
@@ -527,10 +527,6 @@
                 "AipServiceCred": {
                   "UserName": "[variables('AipDomainServiceAccount')]",
                   "Password": "[variables('AipDomainServiceAccountPassword')]"
-                },
-                "ElsieMCred": {
-                  "UserName": "ElsieM",
-                  "Password": "[parameters('ElsieMPassword')]"
                 }
               }
             }
