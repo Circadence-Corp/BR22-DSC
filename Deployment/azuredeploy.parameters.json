@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "builtinAdministratorAccount": {
+            "value": null
+        },
+        "builtinAdministratorPassword": {
+            "value": null
+        },
+        "UserPrincipalName": {
+            "value": null
+        },
+        "DomainName": {
+            "value": null
+        },
+        "NetBiosName": {
+            "value": null
+        },
+        "JeffLPassword": {
+            "value": null
+        },
+        "SamiraAPassword": {
+            "value": null
+        },
+        "RonHdPassword": {
+            "value": null
+        },
+        "LisaVPassword": {
+            "value": null
+        },
+        "ElsieMPassword": {
+            "value": null
+        },
+        "AATPServicePassword": {
+            "value": null
+        }
+    }
+}
