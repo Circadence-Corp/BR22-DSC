@@ -89,7 +89,7 @@
         "10.0.24.11",
         "10.0.24.12",
         "10.0.24.13",
-        "10.0.24.14",        
+        "10.0.24.14",
         "10.0.24.50"
       ]
     },
@@ -119,7 +119,8 @@
     "McasDscName": "SetupMcasClient",
     "McasDscUrl": "[concat('https://github.com/Circadence-Corp/BR22-DSC/blob/', variables('GithubBranch'), '/DSC/ProvisionClient01.zip?raw=true')]",
     "AipDomainServiceAccount": "AipScanner",
-    "AipDomainServiceAccountPassword": "Somepass1"
+    "AipDomainServiceAccountPassword": "Somepass1",
+    "NestedVnetUrl": "[concat('https://raw.githubusercontent.com/Circadence-Corp/BR22-DSC/', variables('GithubBranch'), '/Deployment/Nested/VNetConfiguration.json')]"
   },
   "resources": [
     {
@@ -324,7 +325,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Circadence-Corp/BR22-DSC/master/Nested/VNetConfiguration.json",
+          "uri": "[variables('NestedVnetUrl')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
