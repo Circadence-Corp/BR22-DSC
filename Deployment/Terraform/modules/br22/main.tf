@@ -3,57 +3,12 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
-# This is our definition of the machines to create, which the resources will iterate over
-variable "blueprint" {
-  type = map
-
-  default = {
-    "Dc" = {
-      hostname               = "ContosoDc",
-      private_ip_address     = "10.0.24.4",
-      size                   = "Standard_D2s_v3",
-      source_image_publisher = "MicrosoftWindowsServer",
-      source_image_offer     = "WindowsServer",
-      source_image_sku       = "2016-Datacenter",
-      source_image_version   = "latest"
-    },
-    "VictimPc" = {
-      hostname               = "VictimPc",
-      private_ip_address     = "10.0.24.10",
-      size                   = "Standard_D2s_v3",
-      source_image_publisher = "MicrosoftWindowsServer",
-      source_image_offer     = "WindowsServer",
-      source_image_sku       = "2016-Datacenter",
-      source_image_version   = "latest"
-    },
-    "AdminPc" = {
-      hostname               = "AdminPc",
-      private_ip_address     = "10.0.24.11",
-      size                   = "Standard_D2s_v3",
-      source_image_publisher = "MicrosoftWindowsServer",
-      source_image_offer     = "WindowsServer",
-      source_image_sku       = "2016-Datacenter",
-      source_image_version   = "latest"
-    },
-    "Client01" = {
-      hostname               = "Client01",
-      private_ip_address     = "10.0.24.12",
-      size                   = "Standard_D2s_v3",
-      source_image_publisher = "MicrosoftWindowsServer",
-      source_image_offer     = "WindowsServer",
-      source_image_sku       = "2016-Datacenter",
-      source_image_version   = "latest"
-    }
-  }
-}
-
-
 module "vnet" {
   source              = "Azure/vnet/azurerm"
   resource_group_name = azurerm_resource_group.rg.name
   vnet_name           = join("-", ["vNet", var.name])
   address_space       = ["10.0.0.0/16"]
-  subnet_prefixes     = ["10.0.24.0/24"]
+  subnet_prefixes     = var.subnets_internal
   subnet_names        = ["subnet"]
 
   tags = {
