@@ -1,13 +1,13 @@
-variable "ResourceGroupName" {
+variable "resourceGroupName" {
   type = string
 }
 
-variable "Location" {
+variable "location" {
   type        = string
   description = "The location of the resource group e.g. West Europe"
 }
 
-variable "Description" {
+variable "description" {
   type        = string
   description = "A description of what this is. Added as a tag to all resources."
 }

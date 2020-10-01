@@ -5,9 +5,9 @@ provider "azurerm" {
 
 module "br22" {
   source                       = "./modules/br22"
-  ResourceGroupName            = "ihockett-testing"
-  Location                     = "Central US"
-  Description                  = "ihockett - testing with terraform"
+  resourceGroupName            = "ihockett-testing"
+  location                     = "Central US"
+  description                  = "ihockett - testing with terraform"
   builtinAdministratorAccount  = "ContosoAdmin"
   builtinAdministratorPassword = "Password123!@#"
 }
