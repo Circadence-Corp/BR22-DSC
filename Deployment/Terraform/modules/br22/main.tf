@@ -7,7 +7,7 @@ module "vnet" {
   source              = "Azure/vnet/azurerm"
   resource_group_name = azurerm_resource_group.rg.name
   vnet_name           = join("-", ["vNet", var.name])
-  address_space       = ["10.0.0.0/16"]
+  address_space       = var.subnets_internal
   subnet_prefixes     = var.subnets_internal
   subnet_names        = ["subnet"]
 
@@ -53,26 +53,60 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+resource "azurerm_network_security_group" "nsg" {
+  name                = join("-", ["NSG", var.name])
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = var.tags
+}
 
-#resource "azurerm_network_security_group" "example" {
-#  name                = "acceptanceTestSecurityGroup1"
-#  location            = azurerm_resource_group.example.location
-#  resource_group_name = azurerm_resource_group.example.name
-#
-#  security_rule {
-#    name                       = "test123"
-#    priority                   = 100
-#    direction                  = "Inbound"
-#    access                     = "Allow"
-#    protocol                   = "Tcp"
-#    source_port_range          = "*"
-#    destination_port_range     = "*"
-#    source_address_prefix      = "*"
-#    destination_address_prefix = "*"
-#  }
-#
-#  tags = var.tags
+resource "azurerm_network_security_rule" "inbound_allow_rdp" {
+  name                        = "Allow_RDP"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "3389"
+  source_address_prefixes     = var.mgmt_ips
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
+
+#resource "azurerm_network_security_rule" "AllowVnetInBound" {
+#  name                        = "AllowVnetInBound"
+#  priority                    = 101
+#  direction                   = "Inbound"
+#  access                      = "Allow"
+#  protocol                    = "Tcp"
+#  source_port_range           = "*"
+#  destination_port_range      = "3389"
+#  source_address_prefixes     = var.subnets_internal
+#  destination_address_prefix  = "*"
+#  resource_group_name         = azurerm_resource_group.rg.name
+#  network_security_group_name = azurerm_network_security_group.nsg.name
 #}
+#
+#resource "azurerm_network_security_rule" "AllowVnetOutBound" {
+#  name                         = "AllowVnetOutBound"
+#  priority                     = 101
+#  direction                    = "Outbound"
+#  access                       = "Allow"
+#  protocol                     = "*"
+#  source_port_range            = "*"
+#  destination_port_range       = "*"
+#  source_address_prefix        = "*"
+#  destination_address_prefixes = var.subnets_internal
+#  resource_group_name          = azurerm_resource_group.rg.name
+#  network_security_group_name  = azurerm_network_security_group.nsg.name
+#}
+
+resource "azurerm_network_interface_security_group_association" "nsg_assocation" {
+  for_each                  = azurerm_network_interface.nic
+  network_interface_id      = each.value.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
 
 resource "azurerm_windows_virtual_machine" "vm" {
   for_each            = var.blueprint

@@ -32,6 +32,11 @@ variable "subnets_internal" {
   default = ["10.0.24.0/24"]
 }
 
+variable "mgmt_ips" {
+  type        = list(string)
+  description = "IP addresses to allow rdp into the environment"
+}
+
 # var.blueprint is our definition of the machines to create, which the resources will iterate over
 ## EXAMPLE:
 #"Dc" = {

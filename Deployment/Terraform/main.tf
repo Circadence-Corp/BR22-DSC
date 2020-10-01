@@ -15,6 +15,11 @@ module "br22" {
     Description = "ihockett - testing with terraform"
   }
 
+  mgmt_ips = [
+    "174.63.122.101",
+    "173.175.252.127"
+  ]
+
   blueprint = {
     "Dc" = {
       hostname               = "ContosoDc",
