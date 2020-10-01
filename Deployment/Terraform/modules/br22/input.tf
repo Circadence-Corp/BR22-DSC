@@ -12,9 +12,9 @@ variable "location" {
   description = "The location of the resource group e.g. West Europe"
 }
 
-variable "description" {
-  type        = string
-  description = "A description of what this is. Can be anything. Added as a tag to all resources."
+variable "tags" {
+  type        = map(string)
+  description = "A map of tags to include on resources"
 }
 
 variable "builtinAdministratorAccount" {

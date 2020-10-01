@@ -8,10 +8,13 @@ module "br22" {
   resourceGroupName            = "ihockett-testing"
   name                         = "DefendTheFlag-V3"
   location                     = "Central US"
-  description                  = "ihockett - testing with terraform"
   builtinAdministratorAccount  = "ContosoAdmin"
   builtinAdministratorPassword = "Password123!@#"
   subnets_internal             = ["10.0.24.0/24"]
+  tags = {
+    Description = "ihockett - testing with terraform"
+  }
+
   blueprint = {
     "Dc" = {
       hostname               = "ContosoDc",

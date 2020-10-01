@@ -11,9 +11,7 @@ module "vnet" {
   subnet_prefixes     = var.subnets_internal
   subnet_names        = ["subnet"]
 
-  tags = {
-    Description = var.description
-  }
+  tags = var.tags
 
   depends_on = [azurerm_resource_group.rg]
 }
@@ -25,9 +23,7 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
 
-  tags = {
-    Description = var.description,
-  }
+  tags = var.tags
 }
 
 resource "azurerm_storage_account" "sa_netmon" {
@@ -38,9 +34,7 @@ resource "azurerm_storage_account" "sa_netmon" {
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
 
-  tags = {
-    Description = var.description
-  }
+  tags = var.tags
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -58,6 +52,27 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address            = each.value.private_ip_address
   }
 }
+
+
+#resource "azurerm_network_security_group" "example" {
+#  name                = "acceptanceTestSecurityGroup1"
+#  location            = azurerm_resource_group.example.location
+#  resource_group_name = azurerm_resource_group.example.name
+#
+#  security_rule {
+#    name                       = "test123"
+#    priority                   = 100
+#    direction                  = "Inbound"
+#    access                     = "Allow"
+#    protocol                   = "Tcp"
+#    source_port_range          = "*"
+#    destination_port_range     = "*"
+#    source_address_prefix      = "*"
+#    destination_address_prefix = "*"
+#  }
+#
+#  tags = var.tags
+#}
 
 resource "azurerm_windows_virtual_machine" "vm" {
   for_each            = var.blueprint
