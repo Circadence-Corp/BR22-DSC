@@ -6,6 +6,7 @@ provider "azurerm" {
 module "br22" {
   source                       = "./modules/br22"
   resourceGroupName            = "ihockett-testing"
+  name                         = "DefendTheFlag-V3"
   location                     = "Central US"
   description                  = "ihockett - testing with terraform"
   builtinAdministratorAccount  = "ContosoAdmin"
