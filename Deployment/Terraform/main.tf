@@ -8,8 +8,6 @@ module "br22" {
   resourceGroupName            = "ihockett-testing"
   name                         = "DefendTheFlag-V3"
   location                     = "Central US"
-  builtinAdministratorAccount  = "ContosoAdmin"
-  builtinAdministratorPassword = "Password123!@#"
   subnets_internal             = ["10.0.24.0/24"]
   tags = {
     Description = "ihockett - testing with terraform"
@@ -19,6 +17,28 @@ module "br22" {
     "174.63.122.101",
     "173.175.252.127"
   ]
+
+  dsc_info = {
+    DcDscUrl = "https://github.com/Circadence-Corp/BR22-DSC/blob/master/DSC/ProvisionDcDsc.zip?raw=true'"
+    DcDscScript = "ProvisionDcDsc.ps1"
+    DcFunction = "CreateADForest"
+    DomainName = "Contoso.Azure"
+    NetBiosName = "CONTOSO"
+    UserPrincipalName = "alpineskihouse"
+    Branch = "master"
+  }
+
+  creds = {
+    builtinAdministratorAccount  = "ContosoAdmin"
+    builtinAdministratorPassword = "Password123!@#"
+    JeffLPassword = "Password$fun"
+    SamiraAPassword = "NinjaCat123!@#"
+    RonHdPassword = "FightingTiger$"
+    LisaVPassword = "HighImpactUser1!"
+    AATPServicePassword = "Password123!@#"
+    AipDomainServiceAccount = "AipScanner"
+    AipDomainServiceAccountPassword = "Somepass1"
+  }
 
   blueprint = {
     "Dc" = {

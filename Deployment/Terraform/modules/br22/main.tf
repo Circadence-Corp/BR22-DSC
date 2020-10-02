@@ -85,8 +85,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = each.value.size
-  admin_username      = var.builtinAdministratorAccount
-  admin_password      = var.builtinAdministratorPassword
+  admin_username      = var.creds["builtinAdministratorAccount"]
+  admin_password      = var.creds["builtinAdministratorPassword"]
   network_interface_ids = [
     azurerm_network_interface.nic[each.key].id
   ]
@@ -112,3 +112,87 @@ data "azurerm_public_ip" "all_public_ips" {
   name = each.value.name
   resource_group_name = azurerm_resource_group.rg.name
 }
+
+resource "azurerm_virtual_machine_extension" "dsc_dc" {
+  name                 = "dsc_dc"
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm["Dc"].id
+  publisher            = "Microsoft.Powershell"
+  type                 = "DSC"
+  type_handler_version = "2.77"
+
+  settings = <<SETTINGS
+        {
+            "configuration": {
+                "url": "${var.dsc_info["DcDscUrl"]}",
+                "script": "${var.dsc_info["DcDscScript"]}",
+                "function": "${var.dsc_info["DcFunction"]}"
+              },
+            "configurationArguments": {
+              "DomainName": "${var.dsc_info["DomainName"]}",
+              "UserPrincipalName": "${var.dsc_info["UserPrincipalName"]}",
+              "NetBiosName": "${var.dsc_info["NetBiosName"]}",
+              "Branch": "${var.dsc_info["Branch"]}"
+            }
+        }
+    SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "configurationArguments": {
+        "AdminCreds": {
+          "UserName": "${var.creds["builtinAdministratorAccount"]}",
+          "Password": "${var.creds["builtinAdministratorPassword"]}"
+        },
+        "JeffLCreds": {
+          "UserName": "JeffL",
+          "Password": "${var.creds["JeffLPassword"]}"
+        },
+        "SamiraACreds": {
+          "UserName": "SamiraA",
+          "Password": "${var.creds["SamiraAPassword"]}"
+        },
+        "RonHdCreds": {
+          "UserName": "RonHD",
+          "Password": "${var.creds["RonHdPassword"]}"
+        },
+        "LisaVCreds": {
+          "UserName": "LisaV",
+          "Password": "${var.creds["LisaVPassword"]}"
+        },
+        "AatpServiceCreds": {
+          "UserName": "AATPService",
+          "Password": "${var.creds["AATPServicePassword"]}"
+        },
+        "AipServiceCreds": {
+          "UserName": "${var.creds["AipDomainServiceAccount"]}",
+          "Password": "${var.creds["AipDomainServiceAccountPassword"]}"
+        }
+      }
+    }
+PROTECTED_SETTINGS
+}
+
+#resource "azurerm_virtual_machine_extension" "joindomain" {
+#  count = var.compute_instance_count
+#  name                 = "joindomain"
+#  virtual_machine_id   = element(azurerm_virtual_machine.compute.*.id, count.index)
+#  publisher            = "Microsoft.Compute"
+#  type                 = "JsonADDomainExtension"
+#  type_handler_version = "1.3"
+#
+#  settings = <<SETTINGS
+#      {
+#        "Name": "EXAMPLE.COM",
+#        "User": "EXAMPLE.COM\\azureuser",
+#        "Restart": "true",
+#        "Options": "3"
+#      }
+#    SETTINGS
+#
+#  protected_settings = <<PROTECTED_SETTINGS
+#    {
+#      "Password": "F@ncyP@ssw0rd"
+#    }
+#PROTECTED_SETTINGS
+#}
+

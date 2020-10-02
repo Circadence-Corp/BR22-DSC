@@ -59,4 +59,20 @@ variable "mgmt_ips" {
 #}
 variable "blueprint" {
   type = map
+  description = "Definition of the machines to create. Must include a 'Dc' entry"
+
+  validation {
+    condition = contains([for k in keys(var.blueprint) : k if k == "Dc"], "Dc")
+    error_message = "The blueprint map must contain one key called 'Dc'."
+  }
+}
+
+variable "dsc_info" {
+  type = map
+  description = "DSC-specific configuration information."
+}
+
+variable "creds" {
+  type = map
+  description = "Any credentials used in the configuration."
 }
