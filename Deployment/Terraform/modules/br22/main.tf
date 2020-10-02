@@ -106,3 +106,9 @@ resource "azurerm_windows_virtual_machine" "vm" {
 
   depends_on = [azurerm_network_interface.nic]
 }
+
+data "azurerm_public_ip" "all_public_ips" {
+  for_each = azurerm_public_ip.public_ip
+  name = each.value.name
+  resource_group_name = azurerm_resource_group.rg.name
+}

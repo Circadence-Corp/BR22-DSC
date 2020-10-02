@@ -59,3 +59,7 @@ module "br22" {
     }
   }
 }
+
+output "all_public_ip_addresses" {
+  value = module.br22.public_ips
+}
