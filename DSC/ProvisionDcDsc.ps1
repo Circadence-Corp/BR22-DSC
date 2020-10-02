@@ -71,6 +71,7 @@ Configuration CreateADForest
 		LocalConfigurationManager
 		{
 			RebootNodeIfNeeded = $true
+			ActionAfterReboot = "ContinueConfiguration"
 		}
 
         Service DisableWindowsUpdate
