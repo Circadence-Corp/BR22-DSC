@@ -19,13 +19,13 @@ module "br22" {
   ]
 
   dsc_info = {
-    DcDscUrl = "https://github.com/Circadence-Corp/BR22-DSC/blob/master/DSC/ProvisionDcDsc.zip?raw=true'"
+    DcDscUrl = "https://github.com/Circadence-Corp/BR22-DSC/blob/terraform_rewrite/ihockett/DSC/ProvisionDcDsc.zip?raw=true'"
     DcDscScript = "ProvisionDcDsc.ps1"
     DcFunction = "CreateADForest"
     DomainName = "Contoso.Azure"
     NetBiosName = "CONTOSO"
     UserPrincipalName = "alpineskihouse"
-    Branch = "master"
+    Branch = "terraform_rewrite/ihockett"
   }
 
   creds = {
