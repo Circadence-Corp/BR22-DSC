@@ -60,8 +60,3 @@ variable "blueprint" {
     error_message = "The blueprint map must contain one key called 'Dc'."
   }
 }
-
-variable "branch" {
-  type        = string
-  description = "the git branch to use"
-}

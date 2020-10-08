@@ -1,26 +1,6 @@
-variable "blueprint" {
-  type        = map
-  description = "Definition of the machines to create. Must include a 'Dc' entry"
-
-  validation {
-    condition     = contains([for k in keys(var.blueprint) : k if k == "Dc"], "Dc")
-    error_message = "The blueprint map must contain one key called 'Dc'."
-  }
-
-  validation {
-    condition     = contains([for i in var.blueprint : contains(keys(i), "vm_name") ? 1 : 2], 2) ? false : true
-    error_message = "Each entry the blueprint map must contain one key called 'vm_name'."
-  }
-}
-
 variable "resource_group_name" {
   type        = string
   description = "(optional) describe your variable"
-}
-
-variable "domain_info" {
-  type        = map
-  description = "AD domain information."
 }
 
 variable "branch" {
@@ -31,4 +11,45 @@ variable "branch" {
 variable "creds" {
   type        = map
   description = "map of variables to use"
+}
+
+variable "blueprint" {
+  type        = object({
+    domain_controller = string
+    domain_client = list(string)
+  })
+  description = "Machines to be applied DSC configurations, grouped by role."
+
+  validation {
+    condition     = contains([for k in keys(var.blueprint) : k if k == "domain_controller"], "domain_controller")
+    error_message = "The blueprint map must contain one key called 'domain_controller'."
+  }
+
+  validation {
+    condition     = contains([for k in keys(var.blueprint) : k if k == "domain_client"], "domain_client")
+    error_message = "The blueprint map must contain one key called 'domain_client'."
+  }
+}
+
+variable "dsc_extension_settings" {
+  type = object({
+    settings = object({
+      configuration = object({
+        url = string
+        script = string
+        function = string
+      })
+      configurationArguments = object({
+        DomainName = string
+        UserPrincipalName = string
+        NetBiosName = string
+        DnsServer = string
+        Branch = string
+      })
+    })
+    protected_settings = object({
+      configurationArguments = any
+    })
+  })
+  description = "The settings and protected settings for the dsc extension to run."
 }

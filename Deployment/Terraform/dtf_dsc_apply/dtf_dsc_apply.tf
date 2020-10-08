@@ -40,8 +40,8 @@ variable "creds" {
 
 variable "branch" {
   type        = string
-  description = "The git branch to use (necessary for DSC configs)."
-  default     = "terraform_rewrite/ihockett"
+  description = "The git branch to use (necessary for DSC configs and helpful for testing)."
+  default     = "dsc_rewrite/ihockett"
 }
 
 module "dtf_dsc" {
@@ -50,76 +50,42 @@ module "dtf_dsc" {
   branch              = var.branch
   creds               = var.creds
 
-  domain_info = {
-    DomainName        = "Contoso.Azure"
-    NetBiosName       = "CONTOSO"
-    UserPrincipalName = "alpineskihouse"
+  dsc_extension_settings = {
+    settings = {
+      configuration = {
+        url = "https://github.com/Circadence-Corp/BR22-DSC/blob/${var.branch}/DSC/new/Configuration.zip?raw=true'"
+        script = "Configuration.ps1"
+        function = "Main"
+      }
+      configurationArguments = {
+        DomainName = "Contoso.Azure"
+        UserPrincipalName = "alpineskihouse"
+        NetBiosName = "CONTOSO"
+        DnsServer = "10.0.24.4"
+        Branch = var.branch
+      }
+    }
+
+    protected_settings = {
+      configurationArguments = {
+        AdminCreds       = var.creds["builtinAdministratorAccount"]
+        JeffLCreds       = var.creds["JeffL"]
+        SamiraACreds     = var.creds["SamiraA"]
+        RonHdCreds       = var.creds["RonHd"]
+        LisaVCreds       = var.creds["LisaV"]
+        AatpServiceCreds = var.creds["AatpService"]
+        AipServiceCreds  = var.creds["AipService"]
+      }
+    }
   }
 
   blueprint = {
-    Dc = {
-      vm_name   = "ContosoDc"
-      private_ip_address     = "10.0.24.4"
-      DscUrl    = "https://github.com/Circadence-Corp/BR22-DSC/blob/${var.branch}/DSC/ProvisionDcDsc.zip?raw=true'"
-      DscScript = "ProvisionDcDsc.ps1"
-      Function  = "CreateADForest"
-      protected_settings = jsonencode(
-        {
-          configurationArguments = {
-            AdminCreds       = var.creds["builtinAdministratorAccount"]
-            JeffLCreds       = var.creds["JeffL"]
-            SamiraACreds     = var.creds["SamiraA"]
-            RonHdCreds       = var.creds["RonHd"]
-            LisaVCreds       = var.creds["LisaV"]
-            AatpServiceCreds = var.creds["AatpService"]
-            AipServiceCreds  = var.creds["AipService"]
-          }
-        }
-      )
-    }
-    VictimPc = {
-      vm_name   = "VictimPc"
-      DscUrl    = "https://github.com/Circadence-Corp/BR22-DSC/blob/${var.branch}/DSC/ProvisionVictimPcDsc.zip?raw=true'"
-      DscScript = "ProvisionVictimPcDsc.ps1"
-      Function  = "SetupVictimPc"
-      protected_settings = jsonencode(
-        {
-          configurationArguments = {
-            AdminCred = var.creds["builtinAdministratorAccount"]
-            RonHdCred = var.creds["RonHd"]
-          }
-        }
-      )
-    }
-    AdminPc = {
-      vm_name   = "AdminPc"
-      DscUrl    = "https://github.com/Circadence-Corp/BR22-DSC/blob/${var.branch}/DSC/ProvisionAdminPcDsc.zip?raw=true'"
-      DscScript = "ProvisionAdminPcDsc.ps1"
-      Function  = "SetupAdminPc"
-      protected_settings = jsonencode(
-        {
-          configurationArguments = {
-            AdminCred      = var.creds["builtinAdministratorAccount"]
-            SamiraACred    = var.creds["SamiraA"]
-            AipServiceCred = var.creds["AipService"]
-          }
-        }
-      )
-    },
-    Client01 = {
-      vm_name   = "Client01"
-      DscUrl    = "https://github.com/Circadence-Corp/BR22-DSC/blob/${var.branch}/DSC/ProvisionClient01.zip?raw=true'"
-      DscScript = "ProvisionClient01.ps1"
-      Function  = "SetupAipScannerCore"
-      protected_settings = jsonencode(
-        {
-          configurationArguments = {
-            AdminCred = var.creds["builtinAdministratorAccount"]
-            LisaVCred = var.creds["LisaV"]
-          }
-        }
-      )
-    }
+    domain_controller = "ContosoDc"
+    domain_client = [
+      "VictimPc",
+      "AdminPc",
+      "Client01"
+    ]
   }
 }
 
