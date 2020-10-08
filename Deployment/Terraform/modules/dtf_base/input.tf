@@ -1,4 +1,4 @@
-variable "resourceGroupName" {
+variable "resource_group_name" {
   type = string
 }
 
@@ -18,13 +18,7 @@ variable "tags" {
 }
 
 variable "builtinAdministratorAccount" {
-  type    = string
-  default = "ContosoAdmin"
-}
-
-variable "builtinAdministratorPassword" {
-  type    = string
-  default = "Password123!@#"
+  type = map
 }
 
 variable "subnets_internal" {
@@ -58,21 +52,16 @@ variable "mgmt_ips" {
 #  source_image_version   = "latest"
 #}
 variable "blueprint" {
-  type = map
+  type        = map
   description = "Definition of the machines to create. Must include a 'Dc' entry"
 
   validation {
-    condition = contains([for k in keys(var.blueprint) : k if k == "Dc"], "Dc")
+    condition     = contains([for k in keys(var.blueprint) : k if k == "Dc"], "Dc")
     error_message = "The blueprint map must contain one key called 'Dc'."
   }
 }
 
-variable "dsc_info" {
-  type = map
-  description = "DSC-specific configuration information."
-}
-
-variable "creds" {
-  type = map
-  description = "Any credentials used in the configuration."
+variable "branch" {
+  type        = string
+  description = "the git branch to use"
 }

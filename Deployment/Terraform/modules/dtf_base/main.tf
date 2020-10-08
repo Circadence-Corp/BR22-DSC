@@ -10,9 +10,8 @@ module "vnet" {
   address_space       = var.subnets_internal
   subnet_prefixes     = var.subnets_internal
   subnet_names        = ["subnet"]
-
+  #dns_servers = [var.blueprint["Dc"].private_ip_address, "1.1.1.1"]
   tags = var.tags
-
   depends_on = [azurerm_resource_group.rg]
 }
 
@@ -22,7 +21,6 @@ resource "azurerm_public_ip" "public_ip" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-
   tags = var.tags
 }
 
@@ -33,7 +31,6 @@ resource "azurerm_storage_account" "sa_netmon" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
-
   tags = var.tags
 }
 
@@ -42,7 +39,7 @@ resource "azurerm_network_interface" "nic" {
   name                = join("-", ["Nic", each.value.hostname])
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-
+  dns_servers =  each.key != "Dc" ? [var.blueprint["Dc"].private_ip_address] : null
 
   ip_configuration {
     name                          = join("-", ["IpConfig", each.value.hostname])
@@ -73,6 +70,7 @@ resource "azurerm_network_security_rule" "inbound_allow_rdp" {
   resource_group_name         = azurerm_resource_group.rg.name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
+
 resource "azurerm_network_interface_security_group_association" "nsg_assocation" {
   for_each                  = azurerm_network_interface.nic
   network_interface_id      = each.value.id
@@ -85,8 +83,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = each.value.size
-  admin_username      = var.creds["builtinAdministratorAccount"]
-  admin_password      = var.creds["builtinAdministratorPassword"]
+  admin_username      = var.builtinAdministratorAccount.UserName
+  admin_password      = var.builtinAdministratorAccount.Password
   network_interface_ids = [
     azurerm_network_interface.nic[each.key].id
   ]
@@ -104,7 +102,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
     version   = each.value.source_image_version
   }
 
-  depends_on = [azurerm_network_interface.nic]
+  #depends_on = [azurerm_network_interface.nic]
 }
 
 data "azurerm_public_ip" "all_public_ips" {
@@ -116,87 +114,3 @@ data "azurerm_public_ip" "all_public_ips" {
     azurerm_windows_virtual_machine.vm
   ]
 }
-
-resource "azurerm_virtual_machine_extension" "dsc_dc" {
-  name                 = "dsc_dc"
-  virtual_machine_id   = azurerm_windows_virtual_machine.vm["Dc"].id
-  publisher            = "Microsoft.Powershell"
-  type                 = "DSC"
-  type_handler_version = "2.77"
-
-  settings = <<SETTINGS
-        {
-            "configuration": {
-                "url": "${var.dsc_info["DcDscUrl"]}",
-                "script": "${var.dsc_info["DcDscScript"]}",
-                "function": "${var.dsc_info["DcFunction"]}"
-              },
-            "configurationArguments": {
-              "DomainName": "${var.dsc_info["DomainName"]}",
-              "UserPrincipalName": "${var.dsc_info["UserPrincipalName"]}",
-              "NetBiosName": "${var.dsc_info["NetBiosName"]}",
-              "Branch": "${var.dsc_info["Branch"]}"
-            }
-        }
-    SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-      "configurationArguments": {
-        "AdminCreds": {
-          "UserName": "${var.creds["builtinAdministratorAccount"]}",
-          "Password": "${var.creds["builtinAdministratorPassword"]}"
-        },
-        "JeffLCreds": {
-          "UserName": "JeffL",
-          "Password": "${var.creds["JeffLPassword"]}"
-        },
-        "SamiraACreds": {
-          "UserName": "SamiraA",
-          "Password": "${var.creds["SamiraAPassword"]}"
-        },
-        "RonHdCreds": {
-          "UserName": "RonHD",
-          "Password": "${var.creds["RonHdPassword"]}"
-        },
-        "LisaVCreds": {
-          "UserName": "LisaV",
-          "Password": "${var.creds["LisaVPassword"]}"
-        },
-        "AatpServiceCreds": {
-          "UserName": "AATPService",
-          "Password": "${var.creds["AATPServicePassword"]}"
-        },
-        "AipServiceCreds": {
-          "UserName": "${var.creds["AipDomainServiceAccount"]}",
-          "Password": "${var.creds["AipDomainServiceAccountPassword"]}"
-        }
-      }
-    }
-PROTECTED_SETTINGS
-}
-
-#resource "azurerm_virtual_machine_extension" "joindomain" {
-#  count = var.compute_instance_count
-#  name                 = "joindomain"
-#  virtual_machine_id   = element(azurerm_virtual_machine.compute.*.id, count.index)
-#  publisher            = "Microsoft.Compute"
-#  type                 = "JsonADDomainExtension"
-#  type_handler_version = "1.3"
-#
-#  settings = <<SETTINGS
-#      {
-#        "Name": "EXAMPLE.COM",
-#        "User": "EXAMPLE.COM\\azureuser",
-#        "Restart": "true",
-#        "Options": "3"
-#      }
-#    SETTINGS
-#
-#  protected_settings = <<PROTECTED_SETTINGS
-#    {
-#      "Password": "F@ncyP@ssw0rd"
-#    }
-#PROTECTED_SETTINGS
-#}
-
