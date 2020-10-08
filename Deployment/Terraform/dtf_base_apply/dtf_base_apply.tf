@@ -1,5 +1,4 @@
 provider "azurerm" {
-  subscription_id = "c084b1bc-6711-4832-a64b-f54dc8fea818"
   features {}
 }
 
@@ -27,7 +26,6 @@ module "dtf_base" {
   name                        = "DefendTheFlag-V3"
   location                    = "Central US"
   subnets_internal            = ["10.0.24.0/24"]
-  branch                      = "terraform_rewrite/ihockett"
   builtinAdministratorAccount = var.creds.builtinAdministratorAccount
   tags = {
     Description = "ihockett - testing with terraform"
