@@ -1,0 +1,130 @@
+global:
+  name: "DefendTheFlag"
+  azure_location: "Central US"
+  branch: "terraform_rewrite/ihockett"
+  DomainName: "Contoso.Azure"
+  NetBiosName: "CONTOSO"
+  UserPrincipalNameSuffix: "seccdt2"
+network:
+  management_ips:
+    - "173.175.252.127"
+  subnets_internal:
+    - "10.0.24.0/24"
+creds:
+  builtinAdministratorAccount:
+    UserName: "ContosoAdmin"
+    Password: "Password123!@#"
+  JeffL:
+    UserName: "JeffL"
+    Password: "Password$fun"
+  SamiraA:
+    UserName: "SamiraA"
+    Password: "NinjaCat123!@#"
+  RonHd:
+    UserName: "RonHd"
+    Password: "FightingTiger$"
+  LisaV:
+    UserName: "LisaV"
+    Password: "HighImpactUser1!"
+  AatpService:
+    UserName: "AATPService"
+    Password: "Password123!@#"
+  AipService:
+    UserName: "AipScanner"
+    Password: "Somepass1"
+vms:
+  Dc:
+    name: "ContosoDc"
+    private_ip_address: "10.0.24.4"
+    size: "Standard_D2s_v3"
+    source_image_publisher: "MicrosoftWindowsServer"
+    source_image_offer: "WindowsServer"
+    source_image_sku: "2016-Datacenter-smalldisk"
+    source_image_version: "latest"
+    DscUrl: "https://github.com/Circadence-Corp/BR22-DSC/blob/terraform_rewrite/ihockett/DSC/ProvisionDcDsc.zip?raw=true'"
+    DscScript: "ProvisionDcDsc.ps1"
+    Function: "CreateADForest"
+  VictimPc:
+    name: "VictimPc"
+    private_ip_address: "10.0.24.10"
+    size: "Standard_D2s_v3"
+    source_image_publisher: "microsoftwindowsdesktop"
+    source_image_offer: "office-365"
+    source_image_sku: "1903-evd-o365pp"
+    source_image_version: "latest"
+    DscUrl: "https://github.com/Circadence-Corp/BR22-DSC/blob/terraform_rewrite/ihockett/DSC/ProvisionVictimPcDsc.zip?raw=true'"
+    DscScript: "ProvisionVictimPcDsc.ps1"
+    Function: "SetupVictimPc"
+  AdminPc:
+    name: "AdminPc"
+    private_ip_address: "10.0.24.11"
+    size: "Standard_D2s_v3"
+    source_image_publisher: "microsoftwindowsdesktop"
+    source_image_offer: "office-365"
+    source_image_sku: "1903-evd-o365pp"
+    source_image_version: "latest"
+    DscUrl: "https://github.com/Circadence-Corp/BR22-DSC/blob/terraform_rewrite/ihockett/DSC/ProvisionAdminPcDsc.zip?raw=true'"
+    DscScript: "ProvisionAdminPcDsc.ps1"
+    Function: "SetupAdminPc"
+  Client01:
+    name: "Client01"
+    private_ip_address: "10.0.24.12"
+    size: "Standard_D2s_v3"
+    source_image_publisher: "microsoftwindowsdesktop"
+    source_image_offer: "office-365"
+    source_image_sku: "1903-evd-o365pp"
+    source_image_version: "latest"
+    DscUrl: "https://github.com/Circadence-Corp/BR22-DSC/blob/terraform_rewrite/ihockett/DSC/ProvisionClient01.zip?raw=true'"
+    DscScript: "ProvisionClient01.ps1"
+    Function: "SetupAipScannerCore"
+protected_settings:
+  ContosoDc:
+    configurationArguments:
+      AdminCreds:
+        UserName: "ContosoAdmin"
+        Password: "Password123!@#"
+      JeffLCreds:
+        UserName: "JeffL"
+        Password: "Password$fun"
+      SamiraACreds:
+        UserName: "SamiraA"
+        Password: "NinjaCat123!@#"
+      RonHdCreds:
+        UserName: "RonHd"
+        Password: "FightingTiger$"
+      LisaVCreds:
+        UserName: "LisaV"
+        Password: "HighImpactUser1!"
+      AatpServiceCreds:
+        UserName: "AATPService"
+        Password: "Password123!@#"
+      AipServiceCreds:
+        UserName: "AipScanner"
+        Password: "Somepass1"
+  VictimPc:
+    configurationArguments:
+      AdminCred:
+        UserName: "ContosoAdmin"
+        Password: "Password123!@#"
+      RonHdCred:
+        UserName: "RonHd"
+        Password: "FightingTiger$"
+  AdminPc:
+    configurationArguments:
+      AdminCred:
+        UserName: "ContosoAdmin"
+        Password: "Password123!@#"
+      SamiraACred:
+        UserName: "SamiraA"
+        Password: "NinjaCat123!@#"
+      AipServiceCred:
+        UserName: "AipScanner"
+        Password: "Somepass1"
+  Client01:
+    configurationArguments:
+      AdminCred:
+        UserName: "ContosoAdmin"
+        Password: "Password123!@#"
+      LisaVCred:
+        UserName: "LisaV"
+        Password: "HighImpactUser1!"

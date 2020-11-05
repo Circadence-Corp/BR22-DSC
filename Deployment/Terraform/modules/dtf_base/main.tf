@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "rg" {
-  name     = var.resourceGroupName
+  name     = var.resource_group_name
   location = var.location
 }
 
@@ -11,17 +11,17 @@ module "vnet" {
   subnet_prefixes     = var.subnets_internal
   subnet_names        = ["subnet"]
   #dns_servers = [var.blueprint["Dc"].private_ip_address, "1.1.1.1"]
-  tags = var.tags
+  tags       = var.tags
   depends_on = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_public_ip" "public_ip" {
   for_each            = var.blueprint
-  name                = join("-", ["PublicIP", each.value.hostname])
+  name                = join("-", ["PublicIP", each.value.name])
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "azurerm_storage_account" "sa_netmon" {
@@ -31,18 +31,18 @@ resource "azurerm_storage_account" "sa_netmon" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
-  tags = var.tags
+  tags                     = var.tags
 }
 
 resource "azurerm_network_interface" "nic" {
   for_each            = var.blueprint
-  name                = join("-", ["Nic", each.value.hostname])
+  name                = join("-", ["Nic", each.value.name])
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_servers =  each.key != "Dc" ? [var.blueprint["Dc"].private_ip_address] : null
+  dns_servers         = each.key != "Dc" ? [var.blueprint["Dc"].private_ip_address] : null
 
   ip_configuration {
-    name                          = join("-", ["IpConfig", each.value.hostname])
+    name                          = join("-", ["IpConfig", each.value.name])
     subnet_id                     = module.vnet.vnet_subnets[0]
     private_ip_address_allocation = "Static"
     public_ip_address_id          = azurerm_public_ip.public_ip[each.key].id
@@ -79,7 +79,7 @@ resource "azurerm_network_interface_security_group_association" "nsg_assocation"
 
 resource "azurerm_windows_virtual_machine" "vm" {
   for_each            = var.blueprint
-  name                = each.value.hostname
+  name                = each.value.name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = each.value.size
@@ -90,7 +90,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   ]
 
   os_disk {
-    name                 = join("-", ["Disk", each.value.hostname])
+    name                 = join("-", ["Disk", each.value.name])
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
@@ -106,8 +106,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 data "azurerm_public_ip" "all_public_ips" {
-  for_each = azurerm_public_ip.public_ip
-  name = each.value.name
+  for_each            = azurerm_public_ip.public_ip
+  name                = each.value.name
   resource_group_name = azurerm_resource_group.rg.name
   depends_on = [
     azurerm_public_ip.public_ip,

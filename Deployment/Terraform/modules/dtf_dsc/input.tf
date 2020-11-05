@@ -8,9 +8,14 @@ variable "blueprint" {
   }
 
   validation {
-    condition     = contains([for i in var.blueprint : contains(keys(i), "vm_name") ? 1 : 2], 2) ? false : true
-    error_message = "Each entry the blueprint map must contain one key called 'vm_name'."
+    condition     = contains([for i in var.blueprint : contains(keys(i), "name") ? 1 : 2], 2) ? false : true
+    error_message = "Each entry the blueprint map must contain one key called 'name'."
   }
+}
+
+variable "protected_settings_map" {
+  type        = map
+  description = "(optional) describe your variable"
 }
 
 variable "resource_group_name" {
